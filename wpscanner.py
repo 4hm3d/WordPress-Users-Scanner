@@ -18,8 +18,8 @@ def curllib(req, params=None,postdata=None):
     try:
         req = urllib2.Request( req, postdata, headers)
         req = urllib2.urlopen(req, timeout = 30).read()
-    except(HTTPError, e):
-        print(e)
+    except Exception as e:
+        return False
     return req
 
 def sout(s):
@@ -51,21 +51,28 @@ max_login_len = max_name_len = 0
 site = urllib2.urlparse.urlparse( args['site'] )
 usern = args['n']
 
-if (  site ):
-    site = site[0]+"://"+site[1]+"/"
+if site:
+    site = site[0]+"://"+site[1]+"/" if site[2] == "" else site[0]+"://"+site[1]+site[2]
     print("[+]: Scanning "+site)
 else:
     sys.exit("[#]: Wrong SITE formate (ex):\r\nhttp://target.com/")
 for x in range( 0, usern ):
-    sout("[+]: %"+str(100/usern*x)+"\t")
+    sout("[+]: %" + str( 100 / usern*x ) + "\t")
     try:
-        tmp = find_username( curllib(site, '', urllib.urlencode({"author":(x+1)}) ) ) # send the request and extract the info from the respond
+        tmp = curllib(site, '', urllib.urlencode({"author":(x+1)}) )#vsend the request
+        if tmp == False:
+            pass
+        tmp = find_username( tmp ) # extract the info from the respond
     except:
         pass
-    results.append(tmp)
-    max_login_len = len(tmp['user']) if max_login_len < len(tmp['user']) else max_login_len #get the longest username
-    max_name_len = len(tmp['name']) if max_name_len < len(tmp['name']) else max_name_len #get the longest name
+    if len(tmp['user']):
+        results.append(tmp)
+        max_login_len = len(tmp['user']) if max_login_len < len(tmp['user']) else max_login_len #get the longest username
+        max_name_len = len(tmp['name']) if max_name_len < len(tmp['name']) else max_name_len #get the longest name
 
+if not results:
+    print("[ERROR]: Could not find anything, or something went wrong!")
+    sys.exit()
 results = sort_and_deduplicate(results)#remove duplicate
 print("Found "+str( len( results ) )+" users in "+site+"")
 
