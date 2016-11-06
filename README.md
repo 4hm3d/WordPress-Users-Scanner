@@ -1,7 +1,7 @@
 # WordPress Users Scan/Enumerate
 Wordpress users enumerate  bypass to get the website users.
 # Example:
-<img src=http://i.imgur.com/s9GXgha.png />
+<img src="https://raw.githubusercontent.com/4hm3d/WordPress-Users-Scanner/master/scareenshot.png" /><!-- Let github take care of the style :) -->
 
 #Help :
 ```
